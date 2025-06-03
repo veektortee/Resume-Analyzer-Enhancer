@@ -1,38 +1,48 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template_string
+from markupsafe import Markup
 import requests
+import markdown
 
 app = Flask(__name__)
+CLOUD_FUNCTION_URL = 'https://resumatch-backend-790682135616.us-west1.run.app'
 
-CLOUD_FUNCTION_URL = 'YOUR_CLOUD_FUNCTION_URL_HERE'  # Replace with actual deployed URL
+HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html>
+<head><title>ResuMatch</title></head>
+<body>
+<h2>Welcome to ResuMatch!</h2>
+<p>Upload your resume (PDF or image) and job description to get instant feedback.</p>
+<form method="POST" enctype="multipart/form-data">
+<input type="file" name="resume" accept=".pdf,.jpg,.jpeg,.png,.txt"/><br>
+<textarea name="job_description" rows="5" cols="50" placeholder="Paste the job description here"></textarea><br>
+<input type="submit" value="Analyze">
+</form>
+{% if analysis %}
+<h3>Analysis Result:</h3><div>{{ analysis|safe }}</div>
+{% endif %}
+</body>
+</html>
+'''
 
-@app.route('/')
-def upload_form():
-    return '''
-        <form method="POST" enctype="multipart/form-data" action="/upload">
-            <input type="file" name="resume">
-            <textarea name="job_description" placeholder="Paste job description"></textarea>
-            <input type="submit" value="Analyze">
-        </form>
-    '''
-
-@app.route('/upload', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    resume = request.files['resume']
-    job_description = request.form['job_description']
-    
-    # Read resume text (for now, we’ll just read it as string)
-    resume_text = resume.read().decode('utf-8', errors='ignore')
-    
-    # Prepare payload
-    payload = {
-        'resume_text': resume_text,
-        'job_description': job_description
-    }
-    
-    # Call the Cloud Function
-    response = requests.post(CLOUD_FUNCTION_URL, json=payload)
-    
-    return f"Response from Cloud Function: {response.json()}"
+    analysis = None
+    if request.method == 'POST':
+        resume_file = request.files.get('resume')
+        job_description = request.form.get('job_description')
+        files = {'resume': (resume_file.filename, resume_file.stream, resume_file.mimetype)} if resume_file else None
+        data = {'job_description': job_description}
+        response = requests.post(CLOUD_FUNCTION_URL, files=files, data=data)
+        if response.status_code == 200:
+            analysis = response.json().get('analysis')
+            if analysis:
+                clean_html = markdown.markdown(analysis)
+                analysis = Markup(clean_html)
+        else:
+            analysis = f"Error {response.status_code}: {response.text}"
+
+    return render_template_string(HTML_TEMPLATE, analysis=analysis)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

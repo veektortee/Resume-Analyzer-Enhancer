@@ -1,0 +1,29 @@
+## **.gitignore**
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.h5
+
+# Environment
+.env
+*.env
+venv/
+
+# Flask
+instance/
+*.db
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Secrets
+*.json  # For service account keys (DON'T COMMIT THESE)
+
+# Misc
+.DS_Store
