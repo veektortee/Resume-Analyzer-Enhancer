@@ -3,7 +3,7 @@
 ResuMatch is a cloud-native application designed to analyze and enhance resumes based on specific job descriptions. It integrates AI-powered content analysis with a user-friendly web interface.
 
 ## 🌟 Features
-- Analyze resumes in text, PDF, or image formats.
+- Analyze resumes in PDF or image formats.
 - Tailor analysis to specific job descriptions.
 - Clean and structured HTML rendering with markdown support.
 - Seamless file upload and user interaction.
