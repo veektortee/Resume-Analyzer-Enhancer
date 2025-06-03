@@ -7,14 +7,13 @@ ResuMatch is a cloud-native application designed to analyze and enhance resumes 
 - Tailor analysis to specific job descriptions.
 - Clean and structured HTML rendering with markdown support.
 - Seamless file upload and user interaction.
-- Deployed backend and frontend on Cloud Run.
+- Deployed entirely on Cloud Run with a Flask backend and frontend.
 
 ## 🚀 Technologies
 - Google Cloud Platform: Vertex AI (Gemini models), Cloud Run, IAM.
-- Python Flask for backend services.
+- Python Flask for both backend and frontend services.
 - Markdown and Markupsafe for safe HTML rendering.
 - Docker for containerized deployment.
-- React or Flask-based frontend.
 
 ## 📁 Project Structure
 ```
@@ -23,15 +22,15 @@ resumatch/
 │   ├── main.py
 │   ├── requirements.txt
 │   └── Dockerfile
-├── frontend/ (if React is used)
-│   ├── public/
-│   ├── src/
-│   ├── package.json
+├── frontend/
+│   ├── app.py
+│   ├── requirements.txt
 │   └── Dockerfile
 └── README.md
 ```
 
 ## 📦 Deployment
+### Backend Deployment
 1. Build and submit the backend Docker image:
    ```bash
    gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/resumatch-backend
@@ -40,10 +39,18 @@ resumatch/
    ```bash
    gcloud run deploy resumatch-backend --image gcr.io/YOUR_PROJECT_ID/resumatch-backend --platform managed --region YOUR_REGION --allow-unauthenticated
    ```
-3. (Optional) Build and deploy the React frontend similarly.
+
+### Frontend Deployment
+1. Build and submit the frontend Docker image:
+   ```bash
+   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/resumatch-frontend
+   ```
+2. Deploy the frontend to Cloud Run:
+   ```bash
+   gcloud run deploy resumatch-frontend --image gcr.io/YOUR_PROJECT_ID/resumatch-frontend --platform managed --region YOUR_REGION --allow-unauthenticated
+   ```
 
 ## 💡 Future Enhancements
-- Full React-based frontend for a richer user experience.
 - Support for additional languages and resume formats.
 - Enhanced UI design with animations and interactivity.
 
