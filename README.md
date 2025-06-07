@@ -10,7 +10,7 @@ ResuMatch is a cloud-native application designed to analyze and enhance resumes 
 - Deployed entirely on Cloud Run with a Flask backend and frontend.
 
 ## 📹 Demo Video
-Watch the full demo [here](https://www.youtube.com/watch?v=o00hYlLGNeI)
+Watch the full demo [here](https://www.youtube.com/watch?v=o00hYlLGNeI).
 
 ## 🚀 Technologies
 - Google Cloud Platform: Vertex AI (Gemini models), Cloud Run, IAM.
