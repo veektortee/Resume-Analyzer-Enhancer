@@ -1,5 +1,10 @@
-functions-framework
 flask
-google-genai
-google-cloud-vision
+functions-framework
 markdown
+markupsafe
+google-cloud-aiplatform
+google-cloud-vision
+google-generativeai
+PyMuPDF
+pdf2image
+Pillow
