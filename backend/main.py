@@ -1,5 +1,5 @@
 import functions_framework
-from flask import jsonify, request, Markup
+from flask import jsonify, request, Markup, Response
 import markdown
 from google import genai
 from google.cloud import vision
@@ -48,8 +48,7 @@ def analyze_resume(request):
         Job: {job_description}
         """
         response = chat.send_message(prompt)
-        clean_html = markdown.markdown(response.text)
-        return jsonify({'analysis': Markup(clean_html)})
+        return jsonify({'analysis': response.text})
 
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
