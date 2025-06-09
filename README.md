@@ -13,8 +13,7 @@ ResuMatch is a cloud-native application designed to analyze and enhance resumes 
 Watch the full demo [here](https://www.youtube.com/watch?v=o00hYlLGNeI).
 
 ### 🎯 Try the App Now
-✅ Test the **Streamlit version** of ResuMatch here:  
-👉 [https://resumatch.streamlit.app](https://resume-analyzer-enhancer-dt5hzqb6rsvwczcfcy3ppz.streamlit.app/)
+✅ Test the **Streamlit version** of ResuMatch [here](https://resume-analyzer-enhancer-dt5hzqb6rsvwczcfcy3ppz.streamlit.app/)
 
 > Upload your resume, paste a job description, and get instant AI-powered feedback.
 
