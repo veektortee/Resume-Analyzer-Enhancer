@@ -2,9 +2,7 @@ import streamlit as st
 import requests
 import markdown
 from markupsafe import Markup
-from pdf2image import convert_from_bytes
-from PIL import Image
-import io
+import fitz  # PyMuPDF
 
 CLOUD_FUNCTION_URL = 'https://resumatch-backend-790682135616.us-west1.run.app'
 
@@ -19,31 +17,37 @@ job_description = st.text_area("Job Description", height=150)
 
 # Analyze button
 if st.button("Analyze") and resume_file and job_description:
+    file_name = resume_file.name.lower()
+    job_description = job_description.strip()
 
-    # Define the form field for job_description
-    data = {'job_description': job_description}
-
-    if resume_file.name.lower().endswith(".pdf"):
+    if file_name.endswith(".pdf"):
         try:
-            pdf_images = convert_from_bytes(resume_file.read())
-            image_buffers = []
-            for i, img in enumerate(pdf_images):
-                buf = io.BytesIO()
-                img.save(buf, format="PNG")
-                buf.seek(0)
-                image_buffers.append(('resume', (f'page_{i}.png', buf, 'image/png')))
-            files = image_buffers
+            pdf_bytes = resume_file.read()
+            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            resume_text = ""
+            for page in doc:
+                resume_text += page.get_text()
+            if not resume_text.strip():
+                st.error("Could not extract text from PDF.")
+                st.stop()
+            data = {
+                'resume_text': resume_text,
+                'job_description': job_description
+            }
+            with st.spinner("Analyzing..."):
+                response = requests.post(CLOUD_FUNCTION_URL, json=data)
         except Exception as e:
             st.error(f"Error processing PDF: {e}")
             st.stop()
-    else:
-        files = {
-            'resume': (resume_file.name, resume_file, resume_file.type)
-        }
-        
 
-    with st.spinner("Analyzing..."):
-        response = requests.post(CLOUD_FUNCTION_URL, files=files, data=data)
+    else:
+        mime_type = resume_file.type or 'image/png'
+        files = {
+            'resume': (resume_file.name, resume_file, mime_type)
+        }
+        data = {'job_description': job_description}
+        with st.spinner("Analyzing..."):
+            response = requests.post(CLOUD_FUNCTION_URL, files=files, data=data)
 
     if response.status_code == 200:
         analysis = response.json().get('analysis')
