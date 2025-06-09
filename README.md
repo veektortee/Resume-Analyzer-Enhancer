@@ -61,7 +61,7 @@ resumatch/
    ```bash
    gcloud run deploy resumatch-frontend --image gcr.io/YOUR_PROJECT_ID/resumatch-frontend --platform managed --region YOUR_REGION --allow-unauthenticated
    ```
-### Frontend Deployment (Flask on Cloud Run)
+### Frontend Deployment (Streamlit)
 1. Push streamlit_app/app.py and requirements.txt to a public GitHub repo.
 2. Go to https://share.streamlit.io.
 3. Connect your repo and deploy
