@@ -2,3 +2,5 @@ streamlit
 requests
 markdown
 markupsafe
+pdf2image
+Pillow
