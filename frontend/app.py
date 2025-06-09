@@ -1,48 +1,35 @@
-from flask import Flask, request, render_template_string
-from markupsafe import Markup
+import streamlit as st
 import requests
 import markdown
+from markupsafe import Markup
 
-app = Flask(__name__)
 CLOUD_FUNCTION_URL = 'https://resumatch-backend-790682135616.us-west1.run.app'
 
-HTML_TEMPLATE = '''
-<!DOCTYPE html>
-<html>
-<head><title>ResuMatch</title></head>
-<body>
-<h2>Welcome to ResuMatch!</h2>
-<p>Upload your resume (PDF or image) and job description to get instant feedback.</p>
-<form method="POST" enctype="multipart/form-data">
-<input type="file" name="resume" accept=".pdf,.jpg,.jpeg,.png,.txt"/><br>
-<textarea name="job_description" rows="5" cols="50" placeholder="Paste the job description here"></textarea><br>
-<input type="submit" value="Analyze">
-</form>
-{% if analysis %}
-<h3>Analysis Result:</h3><div>{{ analysis|safe }}</div>
-{% endif %}
-</body>
-</html>
-'''
+st.title("🤖 ResuMatch")
+st.write("Upload your resume (PDF or image) and paste a job description to get instant feedback.")
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
-    analysis = None
-    if request.method == 'POST':
-        resume_file = request.files.get('resume')
-        job_description = request.form.get('job_description')
-        files = {'resume': (resume_file.filename, resume_file.stream, resume_file.mimetype)} if resume_file else None
-        data = {'job_description': job_description}
+# Upload resume
+resume_file = st.file_uploader("Upload Resume", type=["pdf", "jpg", "jpeg", "png", "txt"])
+
+# Job description input
+job_description = st.text_area("Job Description", height=150)
+
+# Analyze button
+if st.button("Analyze") and resume_file and job_description:
+    files = {
+        'resume': (resume_file.name, resume_file, resume_file.type)
+    }
+    data = {'job_description': job_description}
+
+    with st.spinner("Analyzing..."):
         response = requests.post(CLOUD_FUNCTION_URL, files=files, data=data)
-        if response.status_code == 200:
-            analysis = response.json().get('analysis')
-            if analysis:
-                clean_html = markdown.markdown(analysis)
-                analysis = Markup(clean_html)
+
+    if response.status_code == 200:
+        analysis = response.json().get('analysis')
+        if analysis:
+            clean_html = markdown.markdown(analysis)
+            st.markdown(clean_html, unsafe_allow_html=True)
         else:
-            analysis = f"Error {response.status_code}: {response.text}"
-
-    return render_template_string(HTML_TEMPLATE, analysis=analysis)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+            st.warning("No analysis returned.")
+    else:
+        st.error(f"Error {response.status_code}: {response.text}")
