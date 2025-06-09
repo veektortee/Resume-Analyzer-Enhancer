@@ -8,4 +8,3 @@ google-generativeai
 PyMuPDF
 pdf2image
 Pillow
-fitz
