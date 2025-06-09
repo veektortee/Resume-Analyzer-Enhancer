@@ -4,3 +4,4 @@ markdown
 markupsafe
 pdf2image
 Pillow
+PyMuPDF
