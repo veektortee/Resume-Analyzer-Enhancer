@@ -5,6 +5,7 @@ from google import genai
 from google.cloud import vision
 import io
 import os
+import fitz  # PyMuPDF
 
 client = genai.Client(vertexai=True, project="phrasal-crowbar-458714-j3", location="us-west1")
 chat = client.chats.create(model="gemini-2.0-flash-001")
@@ -16,6 +17,17 @@ def extract_text_from_image(file_content):
     response = vision_client.text_detection(image=image)
     texts = response.text_annotations
     return texts[0].description if texts else ""
+
+def extract_text_from_pdf(file_content):
+    try:
+        doc = fitz.open(stream=file_content, filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        return text.strip()
+    except Exception as e:
+        print("❌ Error extracting PDF text:", e)
+        return ""
 
 @functions_framework.http
 def analyze_resume(request):
@@ -29,8 +41,11 @@ def analyze_resume(request):
             job_description = request.form.get('job_description', '')
             if resume_file:
                 content = resume_file.read()
-                if resume_file.filename.endswith(('.jpg', '.jpeg', '.png', '.pdf')):
+                filename = resume_file.filename.lower()
+                if filename.endswith(('.jpg', '.jpeg', '.png')):
                     resume_text = extract_text_from_image(content)
+                elif filename.endswith('.pdf'):
+                    resume_text = extract_text_from_pdf(content)
                 else:
                     resume_text = content.decode('utf-8', errors='ignore')
         else:
