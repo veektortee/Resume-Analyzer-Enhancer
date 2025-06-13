@@ -73,3 +73,7 @@ resumatch/
 ## 🔒 Security Considerations
 - Scoped IAM roles for secure API access.
 - Secrets and service account keys are excluded from version control.
+
+## 🪪 License
+
+This project is licensed under the Apache License 2.0. See the `LICENSE` file for details.
