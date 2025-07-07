@@ -7,7 +7,6 @@ ResuMatch is a cloud-native application designed to analyze and enhance resumes 
 - Tailor analysis to specific job descriptions.
 - Clean and structured HTML rendering with markdown support.
 - Seamless file upload and user interaction.
-- Deployed entirely on Cloud Run with a Flask backend and frontend.
 
 ## 📹 Demo Video
 Watch the full demo [here](https://www.youtube.com/watch?v=o00hYlLGNeI).
