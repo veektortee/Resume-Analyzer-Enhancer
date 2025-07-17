@@ -1,6 +1,6 @@
 # ResuMatch: Resume Enhancement Application
 
-ResuMatch is a cloud-native application designed to analyze and enhance resumes based on specific job descriptions. It integrates AI-powered content analysis with a user-friendly web interface.
+ResuMatch is a web-based application designed to analyze and enhance resumes based on specific job descriptions. It integrates AI-powered content analysis with a user-friendly web interface.
 
 ## 🌟 Features
 - Analyze resumes in PDF or image formats.
